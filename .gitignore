@@ -1,2 +1,4 @@
 .env
 .envv
+test.py
+*.jpg

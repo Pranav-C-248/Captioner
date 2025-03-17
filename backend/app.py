@@ -4,12 +4,12 @@ import requests
 from dotenv import dotenv_values
 
 app = Flask(__name__, static_folder="../frontend", static_url_path="")
-key = dotenv_values(".envv")
+config = dotenv_values(".envv")
 
 
 # API Endpoint for caption generation
-API_URL = "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-base"
-HEADERS = {"Authorization": f"Bearer {"key"}
+API_URL = "https://router.huggingface.co/hf-inference/models/Salesforce/blip-image-captioning-base"
+HEADERS = {"Authorization": f"Bearer {config['key']}"}
 
 @app.route("/")
 def serve_frontend():
@@ -18,12 +18,12 @@ def serve_frontend():
 @app.route("/generate_caption", methods=["POST"])
 def generate_caption():
     if "image" not in request.files:
+        print("\nhereeeee")
         return jsonify({"error": "No image uploaded"}), 400
 
     image = request.files["image"]
-    image_data = image.read()
-
-    response = requests.post(API_URL, headers=HEADERS, files={"file": image_data})
+    data=image.read()
+    response = requests.post(API_URL, headers=HEADERS, data= data)
     
     if response.status_code == 200:
         caption = response.json()[0]["generated_text"]
